@@ -42,7 +42,7 @@ jobs:
       - name: Pack SDK package
         run: |
           dotnet pack ./QuantInfra.Sdk.Package/QuantInfra.Sdk.Package.csproj \
-            --configuration Release \            
+            --configuration Release \ 
             -p:PackageVersion=$PACKAGE_VERSION \
             -o ./artifacts/packages      
 
