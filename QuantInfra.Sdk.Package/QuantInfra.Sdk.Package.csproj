@@ -15,6 +15,7 @@
         <PackageTags>trading, trading-platform, algorithmic-trading-engine, crypto-trading, equity-trading, futures-trading</PackageTags>
         <PackageReleaseNotes>Migrating from private repository — step 1</PackageReleaseNotes>
         <PackageProjectUrl>https://www.quantinfra.solutions/</PackageProjectUrl>
+        <IncludeBuildOutpub>true</IncludeBuildOutpub>
     </PropertyGroup>
 
     <ItemGroup>
@@ -43,5 +44,15 @@
                         PrivateAssets="all"
                         ReferenceOutputAssembly="true" />
     </ItemGroup>
+
+    <Target Name="IncludeProjectReferencesInPackage" DependsOnTargets="Build" BeforeTargets="GenerateNuspec">
+        <ItemGroup>
+            <_ProjectReferenceOutput Include="@(ReferenceCopyLocalPaths)"
+                                     Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference'" />
+            <None Include="@(_ProjectReferenceOutput)"
+                  Pack="true"
+                  PackagePath="lib/$(TargetFramework)" />
+        </ItemGroup>
+    </Target>
 
 </Project>
