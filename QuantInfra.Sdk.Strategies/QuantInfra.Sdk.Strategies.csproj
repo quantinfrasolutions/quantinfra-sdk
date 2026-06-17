@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Debug-FAST;Release-FAST;Debug-FAST-PROFILE;Release-FAST-PROFILE;Release-PROFILE</Configurations>
+    <LangVersion>10.0</LangVersion>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug-FAST|AnyCPU' ">
+    <IntermediateOutputPath>obj\Debug\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug-FAST\netstandard2.1</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FAST;;DEBUG_FAST;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
+    <NoWarn>1701;1702</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release-FAST|AnyCPU' ">
+    <IntermediateOutputPath>obj\Release\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;RELEASE;FAST;;RELEASE_FAST;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug-FAST-PROFILE|AnyCPU' ">
+    <IntermediateOutputPath>obj\Debug\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug-FAST-PROFILE\netstandard2.1\netstandard2.1</OutputPath>
+    <DefineConstants>TRACE;DEBUG;FAST;;DEBUG_FAST;NETSTANDARD;NETSTANDARD2_1;PROFILE</DefineConstants>
+    <NoWarn>1701;1702</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release-FAST-PROFILE|AnyCPU' ">
+    <IntermediateOutputPath>obj\Release\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;RELEASE;FAST;;RELEASE_FAST;NETSTANDARD;NETSTANDARD2_1;PROFILE;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release-PROFILE' ">
+    <IntermediateOutputPath>obj\Release\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1;PROFILE;</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QuantInfra.Sdk.Accounts\QuantInfra.Sdk.Accounts.csproj" />
+    <ProjectReference Include="..\QuantInfra.Sdk.MarketData\QuantInfra.Sdk.MarketData.csproj" />
+    <ProjectReference Include="..\QuantInfra.Sdk.Trading\QuantInfra.Sdk.Trading.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
+    <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.3.1" />
+    <PackageReference Include="System.Text.Json" Version="9.0.6" />
+  </ItemGroup>
+</Project>

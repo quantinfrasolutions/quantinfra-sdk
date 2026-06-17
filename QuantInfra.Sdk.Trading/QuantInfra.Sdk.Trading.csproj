@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\QuantInfra.Sdk.Accounting\QuantInfra.Sdk.Accounting.csproj" />
+    <ProjectReference Include="..\QuantInfra.Sdk.Utils.IsExternalInit\QuantInfra.Sdk.Utils.IsExternalInit.csproj" />
+    <ProjectReference Include="..\QuantInfra.Sdk.Utils\QuantInfra.Sdk.Utils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Orders\" />
+    <None Remove="Positions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="9.0.6" />
+  </ItemGroup>
+</Project>
