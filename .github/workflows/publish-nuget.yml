@@ -51,7 +51,7 @@ jobs:
         id: nuget-login
         uses: NuGet/login@v1
         with:
-          user: QuantInfra
+          user: secrets.NUGET_USER
 
       - name: Publish to NuGet
         run: |
