@@ -55,7 +55,7 @@ jobs:
 
       - name: Publish to NuGet
         run: |
-          dotnet nuget push "./artifacts/packages/QuantInfra.Sdk.nupkg" \
+          dotnet nuget push "./artifacts/packages/*.nupkg" \
             --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} \
             --source "https://api.nuget.org/v3/index.json" \
             --skip-duplicate
