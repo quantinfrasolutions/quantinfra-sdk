@@ -39,7 +39,7 @@ jobs:
       - name: Pack SDK package
         run: |
           dotnet pack ./QuantInfra.Sdk.Package/QuantInfra.Sdk.Package.csproj \
-            --configuration Release \            
+            --configuration Release \
             -p:NuspecFile=QuantInfra.Sdk.nuspec \
             -p:NuspecProperties="version=$PACKAGE_VERSION" \
             -o ./artifacts/packages
