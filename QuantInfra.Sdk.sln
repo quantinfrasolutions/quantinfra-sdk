@@ -20,8 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Package", "Q
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Trading.Infrastructure", "QuantInfra.Sdk.Trading.Infrastructure\QuantInfra.Sdk.Trading.Infrastructure.csproj", "{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.StandardIndicators", "QuantInfra.StandardIndicators\QuantInfra.StandardIndicators.csproj", "{A1EEC06D-A318-4510-9937-553BA97A2F6B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,9 +66,5 @@ Global
 		{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1EEC06D-A318-4510-9937-553BA97A2F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1EEC06D-A318-4510-9937-553BA97A2F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1EEC06D-A318-4510-9937-553BA97A2F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1EEC06D-A318-4510-9937-553BA97A2F6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
