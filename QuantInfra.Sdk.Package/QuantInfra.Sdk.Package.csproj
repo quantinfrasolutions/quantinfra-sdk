@@ -45,7 +45,9 @@
                         ReferenceOutputAssembly="true" />
     </ItemGroup>
 
-    <Target Name="IncludeProjectReferencesInPackage" DependsOnTargets="Build" BeforeTargets="GenerateNuspec">
+    <Target Name="IncludeProjectReferencesInPackage"
+            DependsOnTargets="ResolveReferences"
+            BeforeTargets="GenerateNuspec">
         <ItemGroup>
             <_ProjectReferenceOutput Include="@(ReferenceCopyLocalPaths)"
                                      Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference'" />
