@@ -39,14 +39,4 @@
                         PrivateAssets="all" />
     </ItemGroup>
 
-    <Target Name="IncludeReferencedProjectDlls"
-            DependsOnTargets="Build"
-            BeforeTargets="_GetPackageFiles">
-        <ItemGroup>
-            <BuildOutputInPackage
-                    Include="@(ProjectReference->'%(RootDir)%(Directory)bin/$(Configuration)/$(TargetFramework)/%(Filename).dll')"
-                    PackagePath="lib/$(TargetFramework)" />
-        </ItemGroup>
-    </Target>
-
 </Project>

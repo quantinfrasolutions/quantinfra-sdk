@@ -34,16 +34,12 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Restore
-        run: dotnet restore
-
-      - name: Build SDK package
-        run: dotnet build ./QuantInfra.Sdk.Package/QuantInfra.Sdk.Package.csproj --configuration Release
+        run: dotnet restore      
 
       - name: Pack SDK package
         run: |
           dotnet pack ./QuantInfra.Sdk.Package/QuantInfra.Sdk.Package.csproj \
-            --configuration Release \
-            --no-build \
+            --configuration Release \            
             -p:NuspecFile=QuantInfra.Sdk.nuspec \
             -p:NuspecProperties="version=$PACKAGE_VERSION" \
             -o ./artifacts/packages
