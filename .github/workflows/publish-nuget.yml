@@ -36,14 +36,16 @@ jobs:
       - name: Restore
         run: dotnet restore
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+      - name: Build SDK package
+        run: dotnet build ./QuantInfra.Sdk.Package/QuantInfra.Sdk.Package.csproj --configuration Release
 
       - name: Pack SDK package
         run: |
           dotnet pack ./QuantInfra.Sdk.Package/QuantInfra.Sdk.Package.csproj \
             --configuration Release \
-            -p:PackageVersion=$PACKAGE_VERSION \
+            --no-build \
+            -p:NuspecFile=QuantInfra.Sdk.nuspec \
+            -p:NuspecProperties="version=$PACKAGE_VERSION" \
             -o ./artifacts/packages
 
       - name: NuGet trusted publishing login

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>QuantInfra.Sdk</id>
+        <title>QuantInfra.Sdk</title>
+        <version>$version$</version>
+        <authors>QuantInfra Solutions, Inc.</authors>
+        <description>QuantInfra is an open-source algorithmic trading platform. This package contains SDK for developing strategies and indicators.</description>
+        <projectUrl>https://www.quantinfra.solutions/</projectUrl>
+        <license type="expression">Apache-2.0</license>
+        <copyright>Copyright © 2019-2026 QuantInfra Solutions, Inc.</copyright>
+        <tags>trading trading-platform algorithmic-trading-engine crypto-trading equity-trading futures-trading</tags>
+        <repository>https://github.com/quantinfrasolutions/quantinfra-sdk</repository>
+        <dependencies>
+            <group targetFramework="netstandard2.1" />
+        </dependencies>
+    </metadata>
+
+    <files>
+        <file src="bin/Release/netstandard2.1/QuantInfra.Sdk.Package.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.Accounting.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.Accounts.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.MarketData.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.StaticData.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.Strategies.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.Trading.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.Trading.Infrastructure.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.Utils.dll" target="lib/netstandard2.1/" />
+        <file src="./bin/Release/netstandard2.1/QuantInfra.Sdk.Utils.IsExternalInit.dll" target="lib/netstandard2.1/" />
+    </files>
+</package>

@@ -20,40 +20,32 @@
 
     <ItemGroup>
       <ProjectReference Include="..\QuantInfra.Sdk.Accounting\QuantInfra.Sdk.Accounting.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Accounts\QuantInfra.Sdk.Accounts.csproj"
+                        PrivateAssets="all" />
       <ProjectReference Include="..\QuantInfra.Sdk.MarketData\QuantInfra.Sdk.MarketData.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
       <ProjectReference Include="..\QuantInfra.Sdk.StaticData\QuantInfra.Sdk.StaticData.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
       <ProjectReference Include="..\QuantInfra.Sdk.Strategies\QuantInfra.Sdk.Strategies.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
       <ProjectReference Include="..\QuantInfra.Sdk.Trading.Infrastructure\QuantInfra.Sdk.Trading.Infrastructure.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
       <ProjectReference Include="..\QuantInfra.Sdk.Trading\QuantInfra.Sdk.Trading.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
       <ProjectReference Include="..\QuantInfra.Sdk.Utils.IsExternalInit\QuantInfra.Sdk.Utils.IsExternalInit.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
       <ProjectReference Include="..\QuantInfra.Sdk.Utils\QuantInfra.Sdk.Utils.csproj"
-                        PrivateAssets="all"
-                        ReferenceOutputAssembly="true" />
+                        PrivateAssets="all" />
     </ItemGroup>
 
-    <Target Name="IncludeProjectReferencesInPackage"
-            DependsOnTargets="ResolveReferences"
-            BeforeTargets="GenerateNuspec">
+    <Target Name="IncludeReferencedProjectDlls"
+            DependsOnTargets="Build"
+            BeforeTargets="_GetPackageFiles">
         <ItemGroup>
-            <_ProjectReferenceOutput Include="@(ReferenceCopyLocalPaths)"
-                                     Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference'" />
-            <None Include="@(_ProjectReferenceOutput)"
-                  Pack="true"
-                  PackagePath="lib/$(TargetFramework)" />
+            <BuildOutputInPackage
+                    Include="@(ProjectReference->'%(RootDir)%(Directory)bin/$(Configuration)/$(TargetFramework)/%(Filename).dll')"
+                    PackagePath="lib/$(TargetFramework)" />
         </ItemGroup>
     </Target>
 
