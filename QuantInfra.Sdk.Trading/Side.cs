@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Common.Trading
+namespace QuantInfra.Sdk.Trading
 {
     [Flags]
     public enum Side

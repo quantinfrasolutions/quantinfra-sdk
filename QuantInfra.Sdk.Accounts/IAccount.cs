@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Common.Trading;
 using NodaTime;
 using QuantInfra.Sdk.Accounting;
 using QuantInfra.Sdk.Accounts.AccountStates;
+using QuantInfra.Sdk.Trading;
 using QuantInfra.Sdk.Trading.Orders;
 
 namespace QuantInfra.Sdk.Accounts;

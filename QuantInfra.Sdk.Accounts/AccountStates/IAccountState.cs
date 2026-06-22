@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Common.Trading.Positions;
 using QuantInfra.Sdk.Trading.Orders;
+using QuantInfra.Sdk.Trading.Positions;
 
 namespace QuantInfra.Sdk.Accounts.AccountStates;
 

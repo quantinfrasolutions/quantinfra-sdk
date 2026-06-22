@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common.Trading
+namespace QuantInfra.Sdk.Trading
 {
     public class BalanceReport
     {

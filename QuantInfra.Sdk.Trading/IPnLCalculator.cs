@@ -1,5 +1,5 @@
 ﻿
-namespace Common.Trading
+namespace QuantInfra.Sdk.Trading
 {
     public interface IPnLCalculator
     {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using Common.Trading;
 using NodaTime;
 using QuantInfra.Sdk.Trading.ExternalAccounts;
 

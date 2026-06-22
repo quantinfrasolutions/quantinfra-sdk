@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Common.Trading.Positions;
 using NodaTime;
 using QuantInfra.Sdk.Trading.ExternalAccounts;
 using QuantInfra.Sdk.Trading.Orders;
+using QuantInfra.Sdk.Trading.Positions;
 
 namespace QuantInfra.Sdk.Accounts.AccountStates;
 

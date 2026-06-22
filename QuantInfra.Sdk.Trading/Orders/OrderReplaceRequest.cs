@@ -1,5 +1,3 @@
-using Common.Trading;
-
 namespace QuantInfra.Sdk.Trading.Orders;
 
 public class OrderReplaceRequest

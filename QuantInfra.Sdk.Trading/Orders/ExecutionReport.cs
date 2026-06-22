@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
-using Common.Trading;
 using NodaTime;
 
 [assembly:InternalsVisibleTo("System.Text.Json")]

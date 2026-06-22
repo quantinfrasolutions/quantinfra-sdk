@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NodaTime;
 using QuantInfra.Sdk.Trading.Orders;
 
-namespace Common.Trading
+namespace QuantInfra.Sdk.Trading
 {
     public class Trade
     {

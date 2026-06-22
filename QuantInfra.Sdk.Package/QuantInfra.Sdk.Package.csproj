@@ -19,24 +19,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\QuantInfra.Sdk.Accounting\QuantInfra.Sdk.Accounting.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.Accounts\QuantInfra.Sdk.Accounts.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.MarketData\QuantInfra.Sdk.MarketData.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.StaticData\QuantInfra.Sdk.StaticData.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.Strategies\QuantInfra.Sdk.Strategies.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.Trading.Infrastructure\QuantInfra.Sdk.Trading.Infrastructure.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.Trading\QuantInfra.Sdk.Trading.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.Utils.IsExternalInit\QuantInfra.Sdk.Utils.IsExternalInit.csproj"
-                        PrivateAssets="all" />
-      <ProjectReference Include="..\QuantInfra.Sdk.Utils\QuantInfra.Sdk.Utils.csproj"
-                        PrivateAssets="all" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Accounting\QuantInfra.Sdk.Accounting.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Accounts\QuantInfra.Sdk.Accounts.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.MarketData\QuantInfra.Sdk.MarketData.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.StaticData\QuantInfra.Sdk.StaticData.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Strategies\QuantInfra.Sdk.Strategies.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Trading.Infrastructure\QuantInfra.Sdk.Trading.Infrastructure.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Trading\QuantInfra.Sdk.Trading.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Utils.IsExternalInit\QuantInfra.Sdk.Utils.IsExternalInit.csproj" />
+      <ProjectReference Include="..\QuantInfra.Sdk.Utils\QuantInfra.Sdk.Utils.csproj" />
     </ItemGroup>
 
 </Project>

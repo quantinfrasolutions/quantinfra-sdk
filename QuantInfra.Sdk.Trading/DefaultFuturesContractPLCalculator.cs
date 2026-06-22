@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Common.Trading
+namespace QuantInfra.Sdk.Trading
 {
     public sealed class DefaultFuturesContractPLCalculator : IPnLCalculator
     {

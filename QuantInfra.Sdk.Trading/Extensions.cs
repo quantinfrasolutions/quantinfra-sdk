@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Trading.Positions;
+using QuantInfra.Sdk.Trading;
 using QuantInfra.Sdk.Trading.Orders;
+using QuantInfra.Sdk.Trading.Positions;
 
-namespace Common.Trading;
+namespace QuantInfra.Sdk.Trading;
 
 public static class Extensions
 {

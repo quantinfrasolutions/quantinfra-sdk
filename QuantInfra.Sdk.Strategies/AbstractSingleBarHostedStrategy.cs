@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Trading.Positions;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using QuantInfra.Sdk.MarketData;
 using QuantInfra.Sdk.Trading.Orders;
+using QuantInfra.Sdk.Trading.Positions;
 
 namespace QuantInfra.Sdk.Strategies
 {

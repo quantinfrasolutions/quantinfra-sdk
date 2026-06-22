@@ -4,7 +4,7 @@ using System.Diagnostics;
 using NodaTime;
 using QuantInfra.Sdk.Trading.Orders;
 
-namespace Common.Trading.Positions
+namespace QuantInfra.Sdk.Trading.Positions
 {
     public class Position
     {

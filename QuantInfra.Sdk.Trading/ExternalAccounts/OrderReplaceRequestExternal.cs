@@ -1,4 +1,3 @@
-using Common.Trading;
 using QuantInfra.Sdk.Trading.Orders;
 
 namespace QuantInfra.Sdk.Trading.ExternalAccounts;

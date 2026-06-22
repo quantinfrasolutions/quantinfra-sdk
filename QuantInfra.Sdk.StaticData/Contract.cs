@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common.Trading;
 using NodaTime;
 using QuantInfra.Sdk.StaticData.Synthetics;
+using QuantInfra.Sdk.Trading;
 
 namespace QuantInfra.Sdk.StaticData;
 

@@ -7,12 +7,31 @@ namespace QuantInfra.Sdk.Accounts;
 
 public class TradingClientConfig
 {
+    public TradingClientConfig() { }
+
+    public TradingClientConfig(int accountId, string executionServiceName, string? externalAccountId, string tradingClientClassName, string? tradingClientParamsSerialized, string? tradingClientSecret, bool writePerformanceMetrics)
+    {
+        AccountId = accountId;
+        ExecutionServiceName = executionServiceName;
+        ExternalAccountId = externalAccountId;
+        TradingClientClassName = tradingClientClassName;
+        TradingClientParamsSerialized = tradingClientParamsSerialized;
+        TradingClientSecret = tradingClientSecret;
+        WritePerformanceMetrics = writePerformanceMetrics;
+    }
+
+    public TradingClientConfig(TradingClientConfig config) : this(config.AccountId, config.ExecutionServiceName,
+        config.ExternalAccountId, config.TradingClientClassName, config.TradingClientParamsSerialized,
+        config.TradingClientSecret, config.WritePerformanceMetrics)
+    {
+    }
+    
     public int AccountId { get; init; }
     public string ExecutionServiceName { get; init; }
     public string? ExternalAccountId { get; init; }
     public string TradingClientClassName { get; init; }
     public string? TradingClientParamsSerialized { get; init; }
-    public string TradingClientSecret { get; init; }
+    public string? TradingClientSecret { get; init; }
     public bool WritePerformanceMetrics { get; set; }
 
     public TParams? GetParams<TParams>() =>

@@ -1,6 +1,6 @@
 using NodaTime;
 
-namespace Common.Trading.Positions;
+namespace QuantInfra.Sdk.Trading.Positions;
 
 public record PositionValue(
     int AccountId,
