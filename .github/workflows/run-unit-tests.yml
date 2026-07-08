@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          dotnet test QuantInfra.Core.sln \
+          dotnet test QuantInfra.Sdk.sln \
             --configuration Release \
             --logger "trx;LogFileName=test-results.trx"
 
