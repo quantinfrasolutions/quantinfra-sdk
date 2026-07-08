@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <id>QuantInfra.Sdk.Backtesting</id>
+        <title>QuantInfra.Sdk.Backtesting</title>
+        <version>$version$</version>
+        <authors>QuantInfra Solutions, Inc.</authors>
+        <description>QuantInfra is an open-source algorithmic trading platform. This package contains SDK for developing custom backtesting and optimization pipelines.</description>
+        <projectUrl>https://www.quantinfra.solutions/</projectUrl>
+        <license type="expression">Apache-2.0</license>
+        <copyright>Copyright © 2019-2026 QuantInfra Solutions, Inc.</copyright>
+        <tags>trading trading-platform algorithmic-trading-engine crypto-trading equity-trading futures-trading</tags>
+        <repository>https://github.com/quantinfrasolutions/quantinfra-sdk</repository>
+        <dependencies>
+            <group targetFramework="netstandard2.1">
+                <dependency id="QuantInfra.Sdk" version="0.9.1-beta1" />
+            </group>
+        </dependencies>
+    </metadata>
+
+    <files>
+        <file src="bin/Release/netstandard2.1/QuantInfra.Sdk.Backtesting.dll" target="lib/netstandard2.1/" />
+    </files>
+</package>
