@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>10</LangVersion>
+        <Nullable>enable</Nullable>
+        <PackageId>QuantInfra.Sdk.Backtesting</PackageId>
+        <Version>0.9-beta</Version>
+        <Title>QuantInfra.Sdk.Backtesting</Title>
+        <Authors>QuantInfra Solutions, Inc.</Authors>
+        <Description>QuantInfra is an open-source algorithmic trading platform. This package contains SDK for developing custom backtesting and optimization workflows.</Description>
+        <Copyright>Copyright © 2019-2026 QuantInfra Solutions, Inc.</Copyright>
+        <PackageLicenseUrl>https://github.com/quantinfrasolutions/quantinfra-sdk?tab=Apache-2.0-1-ov-file</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/quantinfrasolutions/quantinfra-sdk</RepositoryUrl>
+        <PackageTags>trading, trading-platform, algorithmic-trading-engine, crypto-trading, equity-trading, futures-trading</PackageTags>
+        <PackageReleaseNotes>Migrating from private repository — step 1</PackageReleaseNotes>
+        <PackageProjectUrl>https://www.quantinfra.solutions/</PackageProjectUrl>
+        <IncludeBuildOutpub>true</IncludeBuildOutpub>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\QuantInfra.Sdk.Strategies\QuantInfra.Sdk.Strategies.csproj" />
+    </ItemGroup>
+
+</Project>

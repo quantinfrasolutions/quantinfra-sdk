@@ -1,24 +1,41 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Accounting", "QuantInfra.Sdk.Accounting\QuantInfra.Sdk.Accounting.csproj", "{3A7F7E1D-DCBC-40C5-9166-15279DDB02FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Accounting", "src/QuantInfra.Sdk.Accounting/QuantInfra.Sdk.Accounting.csproj", "{3A7F7E1D-DCBC-40C5-9166-15279DDB02FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Accounts", "QuantInfra.Sdk.Accounts\QuantInfra.Sdk.Accounts.csproj", "{21CFBC60-298F-494E-AA4E-33DB5EA3A6EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Accounts", "src/QuantInfra.Sdk.Accounts/QuantInfra.Sdk.Accounts.csproj", "{21CFBC60-298F-494E-AA4E-33DB5EA3A6EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.MarketData", "QuantInfra.Sdk.MarketData\QuantInfra.Sdk.MarketData.csproj", "{9A0A7AA4-0F6C-4F4D-B801-FC9B3BD7CFDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.MarketData", "src/QuantInfra.Sdk.MarketData/QuantInfra.Sdk.MarketData.csproj", "{9A0A7AA4-0F6C-4F4D-B801-FC9B3BD7CFDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Trading", "QuantInfra.Sdk.Trading\QuantInfra.Sdk.Trading.csproj", "{A53F0DBB-2F79-481C-A70B-5C69EDCB21E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Trading", "src/QuantInfra.Sdk.Trading/QuantInfra.Sdk.Trading.csproj", "{A53F0DBB-2F79-481C-A70B-5C69EDCB21E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Utils.IsExternalInit", "QuantInfra.Sdk.Utils.IsExternalInit\QuantInfra.Sdk.Utils.IsExternalInit.csproj", "{645A50F6-9CC9-4F47-8C23-673537A7C944}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Utils.IsExternalInit", "src/QuantInfra.Sdk.Utils.IsExternalInit\QuantInfra.Sdk.Utils.IsExternalInit.csproj", "{645A50F6-9CC9-4F47-8C23-673537A7C944}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.StaticData", "QuantInfra.Sdk.StaticData\QuantInfra.Sdk.StaticData.csproj", "{F2B939C9-F44A-4426-A436-29B59035B67C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.StaticData", "src/QuantInfra.Sdk.StaticData/QuantInfra.Sdk.StaticData.csproj", "{F2B939C9-F44A-4426-A436-29B59035B67C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Utils", "QuantInfra.Sdk.Utils\QuantInfra.Sdk.Utils.csproj", "{E345F906-329C-4BC8-BC4F-65921D43DAA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Utils", "src/QuantInfra.Sdk.Utils/QuantInfra.Sdk.Utils.csproj", "{E345F906-329C-4BC8-BC4F-65921D43DAA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Strategies", "QuantInfra.Sdk.Strategies\QuantInfra.Sdk.Strategies.csproj", "{DC7AC436-63EB-46B5-80DE-CCC21F99CE9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Strategies", "src/QuantInfra.Sdk.Strategies/QuantInfra.Sdk.Strategies.csproj", "{DC7AC436-63EB-46B5-80DE-CCC21F99CE9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Package", "QuantInfra.Sdk.Package\QuantInfra.Sdk.Package.csproj", "{11AD651B-CB44-4F20-B0F3-407DCEE9B7D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Package", "src/QuantInfra.Sdk.Package/QuantInfra.Sdk.Package.csproj", "{11AD651B-CB44-4F20-B0F3-407DCEE9B7D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Trading.Infrastructure", "QuantInfra.Sdk.Trading.Infrastructure\QuantInfra.Sdk.Trading.Infrastructure.csproj", "{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Trading.Infrastructure", "src/QuantInfra.Sdk.Trading.Infrastructure/QuantInfra.Sdk.Trading.Infrastructure.csproj", "{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Backtesting", "src/QuantInfra.Sdk.Backtesting/QuantInfra.Sdk.Backtesting.csproj", "{EE82D7CE-96E9-496C-B12E-4A9C88CF1842}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BD122DAA-B1DF-479F-B362-342136F61398}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{221FD4C0-5871-4329-BEEB-BA10D199375F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantInfra.Sdk.Trading.Tests", "tests\QuantInfra.Sdk.Trading.Tests\QuantInfra.Sdk.Trading.Tests.csproj", "{1450F1B3-3036-40A8-8D39-865D5EC5A067}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{0D9C08D1-5F16-4C18-A0CA-D22386F14D1E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{FD0BE91A-F8AA-4428-A3BC-D337AAA868B3}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\run-unit-tests.yml = .github\workflows\run-unit-tests.yml
+		.github\workflows\publish-nuget-sdk-backtesting.yml = .github\workflows\publish-nuget-sdk-backtesting.yml
+		.github\workflows\publish-nuget-sdk.yml = .github\workflows\publish-nuget-sdk.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,5 +83,28 @@ Global
 		{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3884DA75-04DD-43DF-A0D5-74507EF6D7A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE82D7CE-96E9-496C-B12E-4A9C88CF1842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE82D7CE-96E9-496C-B12E-4A9C88CF1842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE82D7CE-96E9-496C-B12E-4A9C88CF1842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE82D7CE-96E9-496C-B12E-4A9C88CF1842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1450F1B3-3036-40A8-8D39-865D5EC5A067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1450F1B3-3036-40A8-8D39-865D5EC5A067}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1450F1B3-3036-40A8-8D39-865D5EC5A067}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1450F1B3-3036-40A8-8D39-865D5EC5A067}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3A7F7E1D-DCBC-40C5-9166-15279DDB02FB} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{21CFBC60-298F-494E-AA4E-33DB5EA3A6EA} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{EE82D7CE-96E9-496C-B12E-4A9C88CF1842} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{9A0A7AA4-0F6C-4F4D-B801-FC9B3BD7CFDC} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{11AD651B-CB44-4F20-B0F3-407DCEE9B7D5} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{F2B939C9-F44A-4426-A436-29B59035B67C} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{DC7AC436-63EB-46B5-80DE-CCC21F99CE9E} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{A53F0DBB-2F79-481C-A70B-5C69EDCB21E6} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{3884DA75-04DD-43DF-A0D5-74507EF6D7A3} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{E345F906-329C-4BC8-BC4F-65921D43DAA0} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{645A50F6-9CC9-4F47-8C23-673537A7C944} = {BD122DAA-B1DF-479F-B362-342136F61398}
+		{1450F1B3-3036-40A8-8D39-865D5EC5A067} = {221FD4C0-5871-4329-BEEB-BA10D199375F}
+		{FD0BE91A-F8AA-4428-A3BC-D337AAA868B3} = {0D9C08D1-5F16-4C18-A0CA-D22386F14D1E}
 	EndGlobalSection
 EndGlobal
