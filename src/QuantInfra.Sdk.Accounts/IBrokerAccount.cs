@@ -1,3 +1,4 @@
+using System;
 using NodaTime;
 using QuantInfra.Sdk.Accounts.ExternalAccounts;
 using QuantInfra.Sdk.Trading.ExternalAccounts;
@@ -24,4 +25,6 @@ public interface IBrokerAccount : IAccount
     void PlaceExternalOrder(ExecutionReport er, Instant processingDt);
     void CancelExternalOrder(ExecutionReport er, Instant processingDt);
     void ReplaceExternalOrder(OrderReplaceRequest req, ExecutionReport er, Instant processingDt);
+    
+    void Reconcile(Instant processingDt, Guid? requestId);
 }

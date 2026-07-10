@@ -32,8 +32,10 @@ public class BrokerAccountStateReadonly : AccountStateReadonly, IBrokerAccountSt
         IReadOnlyCollection<string> lastReceivedBalanceOperationIds, 
         IReadOnlyCollection<ExternalTradeRecord> tradesDeadLetterQueue, 
         IReadOnlyCollection<string> unmappedExternalContractIds,
+        IReadOnlyCollection<string> unmappedExternalAssetIds,
         IReadOnlyDictionary<string, Instant> usedContractIds, 
         bool isReconciled,
+		IReadOnlyCollection<string> reconciliationMessages,
         bool needsOrdersReconciliation,
         bool needsTradesReconciliation
     ) : base(accountServiceName, accountId, positionAccounting, balances, positions, orders, investment, 
@@ -47,8 +49,10 @@ public class BrokerAccountStateReadonly : AccountStateReadonly, IBrokerAccountSt
         LastReceivedBalanceOperationIds = lastReceivedBalanceOperationIds;
         TradesDeadLetterQueue = tradesDeadLetterQueue;
         UnmappedExternalContractIds = unmappedExternalContractIds;
+        UnmappedExternalAssetIds = unmappedExternalAssetIds;
         UsedContractIds = usedContractIds;
         IsReconciled = isReconciled;
+		ReconciliationMessages = reconciliationMessages;
         NeedsOrdersReconciliation = needsOrdersReconciliation;
         NeedsTradesReconciliation = needsTradesReconciliation;
     }
@@ -62,8 +66,10 @@ public class BrokerAccountStateReadonly : AccountStateReadonly, IBrokerAccountSt
     public IReadOnlyCollection<string> LastReceivedBalanceOperationIds { get; }
     public IReadOnlyCollection<ExternalTradeRecord> TradesDeadLetterQueue { get; }
     public IReadOnlyCollection<string> UnmappedExternalContractIds { get; }
+    public IReadOnlyCollection<string> UnmappedExternalAssetIds { get; }
     public IReadOnlyDictionary<string, Instant> UsedContractIds { get; }
     public bool IsReconciled { get; }
+	public IReadOnlyCollection<string> ReconciliationMessages { get; }
     public bool NeedsOrdersReconciliation { get; }
     public bool NeedsTradesReconciliation { get; }
 }

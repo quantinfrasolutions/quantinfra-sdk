@@ -5,6 +5,7 @@ using QuantInfra.Sdk.Accounting;
 using QuantInfra.Sdk.Accounts.AccountStates;
 using QuantInfra.Sdk.Trading;
 using QuantInfra.Sdk.Trading.Orders;
+using QuantInfra.Sdk.Trading.Positions;
 
 namespace QuantInfra.Sdk.Accounts;
 
@@ -27,6 +28,14 @@ public interface IAccount : ITradingAccount
     void OnHeartbeat(Instant dt);
     
     (decimal dailyReturn, decimal currentDrawdown) GetLiquidationInfo(IReadOnlyDictionary<int, double> lastPrices, Instant referenceDt);
+
+    public (
+        IReadOnlyCollection<Position> positions,
+        IReadOnlyDictionary<long, PositionValue> positionValues,
+        IReadOnlyDictionary<int, BalanceValue> balanceValues,
+        IReadOnlyDictionary<int, PnLCalculatorOptions> pnLCalculatorOptions,
+        bool success
+    ) MarkToMarket(Instant dt);
     
     void MarkToMarketEod(IReadOnlyDictionary<int, decimal> eodPrices, Instant dt, Instant processingDt);
 }

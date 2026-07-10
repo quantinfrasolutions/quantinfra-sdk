@@ -15,8 +15,10 @@ public interface IBrokerAccountStateReadonly : IAccountStateReadonly
     IReadOnlyCollection<string> LastReceivedBalanceOperationIds { get; }
     IReadOnlyCollection<ExternalTradeRecord> TradesDeadLetterQueue { get; }
     IReadOnlyCollection<string> UnmappedExternalContractIds { get; }
+    IReadOnlyCollection<string> UnmappedExternalAssetIds { get; }
     IReadOnlyDictionary<string, Instant> UsedContractIds { get; }
     bool IsReconciled { get; }
+	IReadOnlyCollection<string> ReconciliationMessages { get; }
     bool NeedsOrdersReconciliation { get; }
     bool NeedsTradesReconciliation { get; }
 }
