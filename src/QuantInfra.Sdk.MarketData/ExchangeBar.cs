@@ -1,9 +1,11 @@
-﻿using NodaTime;
+﻿using System.Text.Json.Serialization;
+using NodaTime;
 
 namespace QuantInfra.Sdk.MarketData;
 
 public class ExchangeBar
 {
+    [JsonConstructor]
     public ExchangeBar(int streamId, int? contractId, Instant openDt, Instant closeDt, double open, double high, double low, double close, double volume, double dollarValue, int? tradingSessionId)
     {
         StreamId = streamId;
