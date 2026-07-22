@@ -19,10 +19,6 @@ namespace QuantInfra.Sdk.Strategies;
 /// </summary>
 public abstract class AbstractHostedStrategy
 {
-    public const int DefaultMarketOrderOpenPositionValiditySeconds = 120;
-    public const string DefaultClOrdId = "0";
-    public const string MainSymbolName = "main";
-
     protected AbstractHostedStrategy(Strategy s)
     {
         StrategyConfig = s;
@@ -213,10 +209,10 @@ public abstract class AbstractHostedStrategy
         OnDeployed(Context!);
     }
 
-    internal bool ProcessTick(ExchangeTrade tick)
+    internal void ProcessTick(ExchangeTrade tick)
     {
         CheckContext();
-        return OnTick(tick, Context!);
+        OnTick(tick, Context!);
     }
 
     internal bool ProcessHeartbeat()
@@ -226,28 +222,28 @@ public abstract class AbstractHostedStrategy
         return true;
     }
 
-    internal bool ProcessExchangeBar(ExchangeBar bar)
+    internal void ProcessExchangeBar(ExchangeBar bar)
     {
         CheckContext();
-        return OnExchangeBar(bar, Context!);
+        OnExchangeBar(bar, Context!);
     }
     
-    internal bool ProcessClosedBar(string barQualifier)
+    internal void ProcessClosedBar(string barQualifier)
     {
         CheckContext();
-        return OnBarClosed(barQualifier, Context!);
+        OnBarClosed(barQualifier, Context!);
     }
 
-    internal bool ProcessOrderbookL2Update(int contractId, IReadOnlyDictionary<decimal, decimal> updatedBids, IReadOnlyDictionary<decimal, decimal> updatedAsks)
+    internal void ProcessOrderbookL2Update(int contractId, IReadOnlyDictionary<decimal, decimal> updatedBids, IReadOnlyDictionary<decimal, decimal> updatedAsks)
     {
         CheckContext();
-        return OnOrderBookUpdated(contractId, updatedBids, updatedAsks, Context!);
+        OnOrderBookUpdated(contractId, updatedBids, updatedAsks, Context!);
     }
 
-    internal bool ProcessBestBidOfferUpdate(int contractId, BookLevel? bestBid, BookLevel? bestAsk)
+    internal void ProcessBestBidOfferUpdate(int contractId, BookLevel? bestBid, BookLevel? bestAsk)
     {
         CheckContext();
-        return OnBestBidOfferUpdated(contractId, bestBid, bestAsk, Context!);
+        OnBestBidOfferUpdated(contractId, bestBid, bestAsk, Context!);
     }
 
     internal void ProcessExecutionReport(ExecutionReport er)
@@ -302,22 +298,24 @@ public abstract class AbstractHostedStrategy
     /// <summary>
     /// Called when a tick is received
     /// </summary>
-    protected virtual bool OnTick(ExchangeTrade tick, StrategyCalculationContext context) => context.IsHistory;
+    protected virtual void OnTick(ExchangeTrade tick, StrategyCalculationContext context) { }
 
     /// <summary>
     /// Called when a 1-minute candle (or other basic aggregation unit, if so configured) is closed
     /// </summary>
-    protected virtual bool OnExchangeBar(ExchangeBar bar, StrategyCalculationContext context) => context.IsHistory;
+    protected virtual void OnExchangeBar(ExchangeBar bar, StrategyCalculationContext context) { }
 
     /// <summary>
     /// Called when any of the bars requested by the strategy is closed
     /// </summary>
-    protected virtual bool OnBarClosed(string barQualifier, StrategyCalculationContext context) => context.IsHistory;
+    protected virtual void OnBarClosed(string barQualifier, StrategyCalculationContext context) { }
     
-    protected virtual bool OnOrderBookUpdated(int contractId, IReadOnlyDictionary<decimal, decimal> updatedBids, IReadOnlyDictionary<decimal, decimal> updatedAsks, StrategyCalculationContext context) => context!.IsHistory;
+    protected virtual void OnOrderBookUpdated(int contractId, IReadOnlyDictionary<decimal, decimal> updatedBids, IReadOnlyDictionary<decimal, decimal> updatedAsks, StrategyCalculationContext context)
+    { }
     
-    protected virtual bool OnBestBidOfferUpdated(int contractId, BookLevel? bestBid, BookLevel? bestAsk,
-        StrategyCalculationContext context) => context!.IsHistory;
+    protected virtual void OnBestBidOfferUpdated(int contractId, BookLevel? bestBid, BookLevel? bestAsk,
+        StrategyCalculationContext context)
+    { }
     
     /// <summary>
     /// Called when a status of an order changes
@@ -348,7 +346,6 @@ public abstract class AbstractHostedStrategy
 
     #endregion
     
-    
     #region Strategies API and helpers
     
     protected void UpdateInternalState(object? state)
@@ -358,236 +355,10 @@ public abstract class AbstractHostedStrategy
         context.Strategy!.UpdateInternalState(state);
     }
 
-    protected void NewOrder(
-        string symbol,
-        decimal signedVolume,
-        PositionEffect positionEffect,
-        string? clOrdId = null,
-        OrdType type = OrdType.Market,
-        double? price = null,
-        double? stopPx = null,
-        bool isSuspended = false,
-        string? positionId = null,
-        IReadOnlyDictionary<string, LinkType>? linkedOrders = null,
-        bool isSltp = false,
-        PegInstructions? pegInstructions = null,
-        int? orderValiditySeconds = null,
-        int[]? tradingSessionIds = null
-    ) => NewOrder(GetContractId(symbol), signedVolume, positionEffect, clOrdId, type, price, stopPx, isSuspended,
-        positionId, linkedOrders, isSltp, pegInstructions, orderValiditySeconds, tradingSessionIds);
-
-    protected void NewOrder(
-        int contractId,
-        decimal signedVolume,            
-        PositionEffect positionEffect,
-        string? clOrdId = null,
-        OrdType type = OrdType.Market,
-        double? price = null,
-        double? stopPx = null,
-        bool isSuspended = false,
-        string? positionId = null,
-        IReadOnlyDictionary<string, LinkType>? linkedOrders = null,
-        bool isSltp = false,
-        PegInstructions? pegInstructions = null,
-        int? orderValiditySeconds = null,
-        int[]? tradingSessionIds = null
-    )
+    public void NewOrder(NewOrderSingle order)
     {
-        var context = Context ?? throw new InvalidOperationException("NewOrder can be called only from inside calculation methods");
-        
-        if (!_usedContractIds.Contains(contractId))
-        {
-            throw new ArgumentException($"Contract {contractId} is not valid for the strategy. Call ClaimContract in OnInitialize to register the contract");
-        }
-
-        if (context.IsHistory) return;
-
-        var positionAccounting = context.AccountRecord!.PositionAccounting;        
-        if (positionAccounting == PositionAccounting.Hedged && positionEffect == PositionEffect.Unknown)
-        {
-            positionEffect = PositionEffect.Open;
-        }
-        
-        #if !FAST
-        Logger.LogInformation($"NewOrder: contractId={contractId}, contractId={contractId}, price={price}, signedVolume={signedVolume}, positionId={positionId}");
-        #endif
-        NewOrderSingle? order;
-
-        var contract = context.GetContract(contractId); 
-        var volume = Math.Abs(signedVolume);
-        
-        // In case of a real account, normalize the volume so a real order can be placed
-        // For virtual accounts, just round to some fraction of a real contract size step
-        volume = context.AccountRecord.AccountType == AccountType.VirtualAccount
-            ? Math.Round(volume * context.VirtualAccountSizeStepFraction / contract.Template.SizeIncrement, 0, (MidpointRounding)2) 
-                / context.VirtualAccountSizeStepFraction * contract.Template.SizeIncrement
-            : contract.NormalizeVolume(volume);
-        
-        if (volume == 0)
-        {
-            if (context.ThrowOnZeroVolumeOrders)
-                throw new NewOrderException(OrderExceptionReason.ZeroQuantity);
-            return;
-        }
-        
-        clOrdId ??= Guid.NewGuid().ToString();
-        
-        switch (type)
-        {
-            case OrdType.Market:
-                if (price.HasValue)
-                    throw new ArgumentException("Price cannot be submitted for a market order");
-                if (stopPx.HasValue)
-                    throw new ArgumentException("Stop price cannot be submitted for a market order");
-                if (isSuspended)
-                    throw new ArgumentException("Market order cannot be suspended");
-                if (isSltp)
-                    throw new ArgumentException("Market order cannot be SLTP");
-                if (pegInstructions.HasValue)
-                    throw new ArgumentException("Market order cannot be pegged");
-                
-                Instant? expireDt = positionEffect == PositionEffect.Open ? 
-                        context.ReferenceDt.Plus(Duration.FromSeconds(orderValiditySeconds ?? DefaultMarketOrderOpenPositionValiditySeconds)) 
-                        : orderValiditySeconds.HasValue 
-                            ? context.ReferenceDt.Plus(Duration.FromSeconds(orderValiditySeconds.Value)) 
-                            : null;
-                
-                order = NewOrderSingle.MarketOrder(clOrdId, context.AccountRecord.AccountId, contractId, positionId, positionEffect, 
-                    volume, signedVolume.FromSign(), linkedOrders: linkedOrders, expireDt: expireDt, tradingSessionsIds: tradingSessionIds);
-                
-                break;
-
-            case OrdType.Limit:
-                if (!price.HasValue)
-                    throw new ArgumentException("Price must be submitted for a limit order");
-                if (stopPx.HasValue)
-                    throw new ArgumentException("Stop price cannot be submitted for a limit order");
-                if (pegInstructions.HasValue)
-                    throw new ArgumentException("Limit order cannot be pegged");
-
-                if (string.IsNullOrEmpty(clOrdId))
-                {
-                    if (isSltp)
-                        clOrdId = GetTakeProfitClOrdId(positionId);
-                    else
-                        clOrdId = DefaultClOrdId;
-                }
-
-                order = NewOrderSingle.LimitOrder(
-                    clOrdId,
-                    context.AccountRecord.AccountId,
-                    contractId,
-                    positionId,
-                    positionEffect,
-                    volume,
-                    signedVolume.FromSign(),
-                    contract.NormalizePrice(price.Value),
-                    linkedOrders: linkedOrders,
-                    isSuspended: isSuspended,
-                    isSLTP: isSltp,
-                    expireDt: orderValiditySeconds.HasValue 
-                        ? context.ReferenceDt.Plus(Duration.FromSeconds(orderValiditySeconds.Value))
-                        : null, tradingSessionsIds: tradingSessionIds);
-                break;
-
-            case OrdType.StopMarket:
-                if (!stopPx.HasValue)
-                    throw new ArgumentException("Stop price must be submitted");
-                if (price.HasValue)
-                    throw new ArgumentException("Price cannot be submitted for a stop order");
-
-                if (string.IsNullOrEmpty(clOrdId))
-                {
-                    if (isSltp)
-                        clOrdId = GetStopLossClOrdId(positionId);
-                    else
-                        clOrdId = DefaultClOrdId;
-                }
-
-                order = NewOrderSingle.StopMarketOrder(
-                    clOrdId,
-                    context.AccountRecord.AccountId,
-                    contractId,
-                    positionId,
-                    positionEffect,
-                    volume,
-                    signedVolume.FromSign(),
-                    contract.NormalizePrice(stopPx.Value),
-                    linkedOrders: linkedOrders,
-                    isSuspended: isSuspended,
-                    isSLTP: isSltp,
-                    pegInstructions: pegInstructions,
-                    expireDt: orderValiditySeconds.HasValue 
-                        ? context.ReferenceDt.Plus(Duration.FromSeconds(orderValiditySeconds.Value))
-                        : null, tradingSessionsIds: tradingSessionIds);
-                break;
-
-            case OrdType.StopLimit:
-                if (!price.HasValue)
-                    throw new ArgumentException("Price must be submitted for a stop limit order");
-                if (!stopPx.HasValue)
-                    throw new ArgumentException("Stop price must be submitted");
-                if (isSltp)
-                    throw new ArgumentException("Stop limit order cannot be SLTP");
-                if (pegInstructions.HasValue)
-                    throw new ArgumentException("Stop limit order cannot be pegged");
-
-                order = NewOrderSingle.StopLimitOrder(
-                    clOrdId ?? DefaultClOrdId,
-                    context.AccountRecord.AccountId,
-                    contractId,
-                    positionId,
-                    positionEffect,
-                    volume,
-                    signedVolume.FromSign(),
-                    contract.NormalizePrice(price.Value),
-                    contract.NormalizePrice(stopPx.Value),
-                    linkedOrders: linkedOrders,
-                    isSuspended: isSuspended,
-                    expireDt: orderValiditySeconds.HasValue 
-                        ? context.ReferenceDt.Plus(Duration.FromSeconds(orderValiditySeconds.Value))
-                        : null, tradingSessionsIds: tradingSessionIds);
-                break;
-
-            case OrdType.MarketIfTouched:
-                if (!price.HasValue)
-                    throw new ArgumentException("Price must be submitted for a MIT order");
-                if (stopPx.HasValue)
-                    throw new ArgumentException("Stop price cannot be submitted for a MIT order");
-                if (pegInstructions.HasValue)
-                    throw new ArgumentException("MIT order cannot be pegged");
-                if (isSltp)
-                    throw new ArgumentException("MITorder cannot be SLTP");
-
-                order = NewOrderSingle.MarketIfTouched(
-                    clOrdId ?? DefaultClOrdId,
-                    context.AccountRecord.AccountId,
-                    contractId,
-                    positionId,
-                    positionEffect,
-                    Math.Abs(signedVolume),
-                    signedVolume.FromSign(),
-                    contract.NormalizePrice(price.Value),
-                    linkedOrders: linkedOrders,
-                    isSuspended: isSuspended, 
-                    tradingSessionsIds: tradingSessionIds
-                );
-                break;
-            
-            default: throw new ArgumentException($"Unsupported order type {type}");
-        }
-
-        if (!string.IsNullOrEmpty(order.ClOrdId) && context.AccountState!.Orders.Any(o => o.ClOrdId == order.ClOrdId))
-        {
-            throw new NewOrderException(OrderExceptionReason.DuplicateClOrdId);
-        }
-        
-        context.Account!.PlaceOrder(order, context.ProcessingDt);
-    }
-
-    protected void NewOrder(NewOrderSingle order)
-    {
-        var context = Context ?? throw new InvalidOperationException("NewOrder can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("NewOrder can be called only from inside calculation methods");
         
         if (order.AccountId != context.AccountRecord!.AccountId) throw new Exception("AccountId mismatch");
         
@@ -601,32 +372,30 @@ public abstract class AbstractHostedStrategy
         context.Account!.PlaceOrder(order, context.ProcessingDt);
     }
     
-    protected void CancelOrder(string clOrdId)
+    public void CancelOrder(string clOrdId)
     {
-        var context = Context ?? throw new InvalidOperationException("CancelOrder can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("CancelOrder can be called only from inside calculation methods");
         
         if (context.IsHistory) return;
         
-        #if !FAST
-        Logger.LogInformation($"CancelOrder: clOrdId={clOrdId}");
-        #endif
+        Logger.LogInformation("CancelOrder: clOrdId={clOrdId}", clOrdId);
 
         if (context.AccountState!.Orders.All(o => o.ClOrdId != clOrdId))
             throw new InvalidOperationException($"Order {clOrdId} does not exist");
         context.Account!.CancelOrder(new() { AccountId = context.AccountRecord!.AccountId, OrigClOrdId = clOrdId }, context.ProcessingDt);
     }
     
-    protected void CancelOrder(long orderId)
+    public void CancelOrder(long orderId)
     {
-        var context = Context ?? throw new InvalidOperationException("CancelOrder can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("CancelOrder can be called only from inside calculation methods");
         
         if (context.IsHistory) return;
         
-        #if !FAST
-        Logger.LogInformation($"CancelOrder: orderId={orderId}");
-        #endif
+        Logger.LogInformation("CancelOrder: orderId={orderId}", orderId);
 
-        if (orderId == 0)
+        if (orderId <= 0)
             throw new InvalidOperationException($"Use ClOrdId to cancel orders that do not have order id assigned");
         
         if (context.AccountState!.Orders.All(o => o.OrderId != orderId))
@@ -634,138 +403,175 @@ public abstract class AbstractHostedStrategy
         context.Account!.CancelOrder(new() { AccountId = context.AccountRecord.AccountId, OrderId = orderId }, context.ProcessingDt);
     }
     
-    protected void ReplaceOrder(OrderReplaceRequest request)
+    public void ReplaceOrder(OrderReplaceRequest request)
     {
-        var context = Context ?? throw new InvalidOperationException("ReplaceOrder can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("ReplaceOrder can be called only from inside calculation methods");
+        
+        if (request.OrderId.HasValue && request.OrderId <= 0)
+            throw new InvalidOperationException($"Use ClOrdId to replace orders that do not have order id assigned");
         
         if (context.IsHistory) return;
         
         context.Account!.ReplaceOrder(request, context.ProcessingDt);
     }
-
+    
     /// <summary>
-    /// Opens new position using a market order
+    /// Opens new position
     /// </summary>
-    protected void OpenPosition(
+    public void OpenPosition(
         string symbol,
         decimal signedVolume,
         double? stopLoss = null,
         double? takeProfit = null,
         string? positionId = null,
-        decimal? trailingStopStep = null,
         OrdType ordType = OrdType.Market,
         double? price = null,
         double? stopPx = null,
-        int? orderValiditySeconds = null,
-        int[]? tradingSessionIds = null
-    ) => OpenPosition(GetContractId(symbol), signedVolume, stopLoss, takeProfit, positionId, trailingStopStep,
-        ordType, price, stopPx, orderValiditySeconds, tradingSessionIds);
+        int? orderValiditySeconds = null
+    ) => OpenPosition(GetContractId(symbol), signedVolume, stopLoss, takeProfit, positionId,
+        ordType, price, stopPx, orderValiditySeconds);
     
     /// <summary>
-    /// Opens new position using a market order
+    /// Opens new position
     /// </summary>
-    protected void OpenPosition(
+    public void OpenPosition(
         int contractId,
         decimal signedVolume,
         double? stopLoss = null,
         double? takeProfit = null,
         string? positionId = null,
-        decimal? trailingStopStep = null,
         OrdType ordType = OrdType.Market,
         double? price = null,
         double? stopPx = null,
-        int? orderValiditySeconds = null,
-        int[]? tradingSessionIds = null
+        int? orderValiditySeconds = null
     )
     {
+        var context = Context 
+            ?? throw new InvalidOperationException("OpenPosition can be called only from inside calculation methods");
+        
         if (!_usedContractIds.Contains(contractId))
             throw new ArgumentException($"Contract {contractId} is not valid for the strategy. Call ClaimContract in OnInitialize to register the contract");
         
-#if !FAST
-        Logger.LogInformation($"OpenPosition: contractId={contractId}, contractId={contractId}, signedVolume={signedVolume}, positionId={positionId}, stopLoss={stopLoss}, takeProfit={takeProfit}");
-#endif
+        Logger.LogInformation("OpenPosition: contractId={contractId}, signedVolume={signedVolume}, positionId={positionId}, stopLoss={stopLoss}, takeProfit={takeProfit}",
+            contractId, signedVolume, positionId, stopLoss, takeProfit);
+
+        var openClOrdId = GetOpenPositionClOrdId(positionId);
         var slClOrdId = GetStopLossClOrdId(positionId);
         var tpClOrdId = GetTakeProfitClOrdId(positionId);
+        var contract = context.GetContract(contractId)!;
+        var expireDt = orderValiditySeconds.HasValue
+            ? (Instant?)context.ReferenceDt.Plus(Duration.FromSeconds(orderValiditySeconds.Value))
+            : null;
+
+        var nos = ordType switch
+        {
+            OrdType.Market => NewOrderSingle.MarketOrder(openClOrdId, context.AccountRecord.AccountId,
+                contractId, positionId, PositionEffect.Open, Math.Abs(signedVolume), signedVolume.FromSign(),
+                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneTriggersOther), (tpClOrdId, LinkType.OneTriggersOther)),
+                expireDt: expireDt
+            ),
+            OrdType.Limit => NewOrderSingle.LimitOrder(openClOrdId, context.AccountRecord.AccountId,
+                contractId, positionId, PositionEffect.Open, Math.Abs(signedVolume), signedVolume.FromSign(), contract.NormalizePrice(price!.Value),
+                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneTriggersOther), (tpClOrdId, LinkType.OneTriggersOther)),
+                expireDt: expireDt
+            ),
+            OrdType.StopMarket => NewOrderSingle.StopMarketOrder(openClOrdId, context.AccountRecord.AccountId,
+                contractId, positionId, PositionEffect.Open, Math.Abs(signedVolume), signedVolume.FromSign(), contract.NormalizePrice(stopPx!.Value),
+                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneTriggersOther), (tpClOrdId, LinkType.OneTriggersOther))
+            ),
+            OrdType.StopLimit => NewOrderSingle.StopLimitOrder(openClOrdId, context.AccountRecord.AccountId,
+                contractId, positionId, PositionEffect.Open, Math.Abs(signedVolume), signedVolume.FromSign(), 
+                contract.NormalizePrice(price!.Value), contract.NormalizePrice(stopPx!.Value),
+                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneTriggersOther), (tpClOrdId, LinkType.OneTriggersOther)),
+                expireDt: expireDt
+            ),
+            OrdType.MarketIfTouched => NewOrderSingle.MarketIfTouched(openClOrdId, context.AccountRecord.AccountId,
+                contractId, positionId, PositionEffect.Open, Math.Abs(signedVolume), signedVolume.FromSign(), contract.NormalizePrice(price!.Value),
+                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneTriggersOther), (tpClOrdId, LinkType.OneTriggersOther)),
+                expireDt: expireDt
+            ),
+            _ => throw new ArgumentException(nameof(ordType))
+        };
         
-        NewOrder(contractId, signedVolume, PositionEffect.Open, GetOpenPositionClOrdId(positionId), ordType, positionId: positionId,
-           linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneTriggersOther), (tpClOrdId, LinkType.OneTriggersOther)),
-           price: price, stopPx: stopPx, orderValiditySeconds: orderValiditySeconds, tradingSessionIds: tradingSessionIds);
+        NewOrder(nos);
 
         if (stopLoss != null)
         {
-            NewOrder(contractId, -signedVolume, PositionEffect.Close, slClOrdId, OrdType.StopMarket,
-                stopPx: stopLoss, isSuspended: true, isSltp: true, positionId: positionId,
-                linkedOrders: CreateLinkedOrdersList((tpClOrdId, LinkType.OneCancelsOther)),
-                // TODO: supports only existing type of trailing stop
-                pegInstructions: trailingStopStep.HasValue ?
-                    new PegInstructions(trailingStopStep.Value, PegMoveType.Approaching) :
-                    null,
-                tradingSessionIds: tradingSessionIds
-            );
+            NewOrder(NewOrderSingle.StopMarketOrder(slClOrdId, context.AccountRecord.AccountId, 
+                contractId, positionId, PositionEffect.Close, Math.Abs(signedVolume), signedVolume.FromSign().Invert(),
+                contract.NormalizePrice(stopLoss.Value),
+                linkedOrders: CreateLinkedOrdersList((tpClOrdId, LinkType.OneCancelsOther))
+            ));
         }
 
         if (takeProfit != null)
         {
-            NewOrder(contractId, -signedVolume, PositionEffect.Close, tpClOrdId, OrdType.Limit,
-                price: takeProfit, isSuspended: true, isSltp: true, positionId: positionId,
-                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneCancelsOther)),
-                tradingSessionIds: tradingSessionIds
-            );
+            NewOrder(NewOrderSingle.LimitOrder(slClOrdId, context.AccountRecord.AccountId, 
+                contractId, positionId, PositionEffect.Close, Math.Abs(signedVolume), signedVolume.FromSign().Invert(),
+                contract.NormalizePrice(takeProfit.Value),
+                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneCancelsOther))
+            ));
         }
     }
-
+    
     /// <summary>
-    /// Reduces a position _to_ the desired volume
+    /// Closes the position using a market order
     /// </summary>
-    protected void ClosePosition(string symbol, decimal newVolume = 0, string? positionId = null, string? clOrdId = null, int? orderValiditySeconds = null, int[]? tradingSessionIds = null)
+    public void ClosePosition(int contractId, string? positionId = null, string? clOrdId = null)
     {
-        var context = Context ?? throw new InvalidOperationException("ClosePosition can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("ClosePosition can be called only from inside calculation methods");
         
-        if (newVolume != 0)
-        {
-            throw new NotSupportedException("Partial closing a position is not yet supported");
-            // Partial closing of a position requires updating the volumes of SLTP
-        }
-        var contractId = GetContractId(symbol);
-#if !FAST
-        Logger.LogInformation($"ClosePosition: symbol={symbol}, contractId={contractId}, newVolume={newVolume}, positionId={positionId}");
-#endif            
-        var position = context.AccountState.Positions.SingleOrDefault(p => p.ContractId == contractId && p.StrategyPositionId == positionId);
-        if (position is null) throw new InvalidOperationException($"Position {positionId} not found in contract {symbol}");
-        var closeVolume = Math.Max(position.Volume - newVolume, 0);
-        if (closeVolume != 0)
-        {
-            var slClOrdId = GetStopLossClOrdId(positionId);
-            var tpClOrdId = GetTakeProfitClOrdId(positionId);
-            NewOrder(symbol, closeVolume * position.Side.Invert().GetSign(), PositionEffect.Close, clOrdId,
-                positionId: positionId,
-                linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneCancelsOther),
-                    (tpClOrdId, LinkType.OneCancelsOther)),
-                orderValiditySeconds: orderValiditySeconds,
-                tradingSessionIds: tradingSessionIds
-            );
-        }
-    }
+        Logger.LogInformation("ClosePosition: contractId={contractId}, positionId={positionId}",
+            contractId, positionId);
+          
+        var position = context.AccountState.Positions.GetPosition(contractId, positionId);
+        if (position is null) return;
 
-    public void ChangePositionSl(string symbol, double? price = null, string? positionId = null)
+        if (string.IsNullOrEmpty(clOrdId)) clOrdId = GetClosePositionClOrdId(positionId);
+        var slClOrdId = GetStopLossClOrdId(positionId);
+        var tpClOrdId = GetTakeProfitClOrdId(positionId);
+        NewOrder(NewOrderSingle.MarketOrder(
+            clOrdId,
+            context.AccountRecord.AccountId,
+            contractId,
+            positionId,
+            PositionEffect.Close,
+            position.Volume,
+            position.Side.Invert(),
+            linkedOrders: CreateLinkedOrdersList((slClOrdId, LinkType.OneCancelsOther), (tpClOrdId, LinkType.OneCancelsOther))
+        ));
+    }
+    
+    /// <summary>
+    /// Closes the position using a market order
+    /// </summary>
+    protected void ClosePosition(string symbol, string? positionId = null, string? clOrdId = null) =>
+        ClosePosition(GetContractId(symbol), positionId, clOrdId);
+    
+    /// <summary>
+    /// Creates, updates, or cancels the stop loss order for the position 
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <param name="price">Pass null to cancel the order</param>
+    /// <param name="positionId"></param>
+    public void ChangePositionSl(int contractId, double? price = null, string? positionId = null)
     {
-        var context = Context ?? throw new InvalidOperationException("ChangePositionSL can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("ChangePositionSL can be called only from inside calculation methods");
+
+        Logger.LogInformation("ChangePositionSL: contractId={contractId}, price={price}, positionId={positionId}",
+            contractId, price, positionId);
         
-        var contractId = GetContractId(symbol);
-#if !FAST
-        Logger.LogInformation($"ChangePositionSL: symbol={symbol}, contractId={contractId}, price={price}, positionId={positionId}");
-#endif
-        var contract = context.GetContract(contractId); 
-        
-        var clOrdId = GetStopLossClOrdId(positionId);
-        var order = context.AccountState.Orders.SingleOrDefault(o =>
-            o.ContractId == contractId && o.ClOrdId == clOrdId);
+        var contract = context.GetContract(contractId)!;
+        var order = GetPositionStopLoss(contractId, positionId);
         
         if (order != null)
         {
             if (price == null)
             {
-                CancelOrder(clOrdId);
+                CancelOrder(order.OrderId);
             }
             else
             {
@@ -779,37 +585,71 @@ public abstract class AbstractHostedStrategy
         }
         else if (price != null)
         {
-            var position = GetPosition(contractId, positionId) ?? throw new InvalidOperationException($"Position {positionId} in {symbol} does not exist");
-            NewOrder(symbol, -position.SignedVolume, PositionEffect.Close, clOrdId, OrdType.StopMarket,
-                stopPx: price, isSltp: true, positionId: positionId,
+            var position = context.AccountState.Positions.GetPosition(contractId, positionId) 
+                ?? throw new InvalidOperationException($"Position {positionId} with contractId {contractId} does not exist");
+            NewOrder(NewOrderSingle.StopMarketOrder(
+                GetStopLossClOrdId(positionId),
+                context.AccountRecord.AccountId,
+                contractId,
+                positionId,
+                PositionEffect.Close,
+                position.Volume,
+                position.Side.Invert(),
+                contract.NormalizePrice(price.Value),
+                isSLTP: true,
                 linkedOrders: CreateLinkedOrdersList((GetTakeProfitClOrdId(positionId), LinkType.OneCancelsOther))
-            );
+            ));
         }
         // TODO: Trailing stops
     }
+    
+    /// <summary>
+    /// Creates, updates, or cancels the stop loss order for the position 
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <param name="price">Pass null to cancel the order</param>
+    /// <param name="positionId"></param>
+    public void ChangePositionSl(string symbol, double? price = null, string? positionId = null) =>
+        ChangePositionSl(GetContractId(symbol), price, positionId);
 
-    protected void CancelPositionSl(string symbol, string? positionId = null)
+    /// <summary>
+    /// Cancels position stop loss order if it exists
+    /// </summary>
+    /// <param name="contractId"></param>
+    /// <param name="positionId"></param>
+    public void CancelPositionSl(int contractId, string? positionId = null)
+        => ChangePositionSl(contractId, null, positionId);
+    
+    /// <summary>
+    /// Cancels position stop loss order if it exists
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <param name="positionId"></param>
+    public void CancelPositionSl(string symbol, string? positionId = null)
         => ChangePositionSl(symbol, null, positionId);
 
-    protected void ChangePositionTp(string symbol, double? price = null, string? positionId = null)
+    /// <summary>
+    /// Creates, updates, or cancels the take profit order for the position 
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <param name="price">Pass null to cancel the order</param>
+    /// <param name="positionId"></param>
+    public void ChangePositionTp(int contractId, double? price = null, string? positionId = null)
     {
-        var context = Context ?? throw new InvalidOperationException("ChangePositionTP can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("ChangePositionTP can be called only from inside calculation methods");
         
-        var contractId = GetContractId(symbol);
-        #if !FAST
-        Logger.LogInformation($"ChangePositionTP: contractId={symbol}, price={price}, positionId={positionId}");
-        #endif
+        Logger.LogInformation("ChangePositionTP: contractId={contractId}, price={price}, positionId={positionId}",
+            contractId, price, positionId);
         
-        var contract = context.GetContract(contractId); 
-        
-        var clOrdId = GetStopLossClOrdId(positionId);
-        var order = GetOrder(contractId, clOrdId, true);
+        var contract = context.GetContract(contractId)!;
+        var order = GetPositionTakeProfit(contractId, positionId);
         
         if (order != null)
         {
             if (price == null)
             {
-                CancelOrder(clOrdId);
+                CancelOrder(order.OrderId);
             }
             else
             {
@@ -823,122 +663,124 @@ public abstract class AbstractHostedStrategy
         }
         else if (price != null)
         {
-            var position = GetPosition(contractId, positionId) ?? throw new InvalidOperationException($"Position {positionId} in {symbol} does not exist");
-            NewOrder(symbol, -position.SignedVolume, PositionEffect.Close, clOrdId, OrdType.Limit, price: price, positionId: positionId,
-                linkedOrders: CreateLinkedOrdersList((GetStopLossClOrdId(positionId), LinkType.OneCancelsOther)));
+            var position = context.AccountState.Positions.GetPosition(contractId, positionId) 
+                ?? throw new InvalidOperationException($"Position {positionId} with contractId {contractId} does not exist");
+            NewOrder(NewOrderSingle.LimitOrder(
+                GetStopLossClOrdId(positionId),
+                context.AccountRecord.AccountId,
+                contractId,
+                positionId,
+                PositionEffect.Close,
+                position.Volume,
+                position.Side.Invert(),
+                contract.NormalizePrice(price.Value),
+                isSLTP: true,
+                linkedOrders: CreateLinkedOrdersList((GetStopLossClOrdId(positionId), LinkType.OneCancelsOther))
+            ));
         }
     }
+    
+    /// <summary>
+    /// Creates, updates, or cancels the take profit order for the position 
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <param name="price">Pass null to cancel the order</param>
+    /// <param name="positionId"></param>
+    public void ChangePositionTp(string symbol, double? price = null, string? positionId = null) =>
+        ChangePositionTp(GetContractId(symbol), price, positionId);
 
-    protected void CancelPositionTp(string symbol, string? positionId = null)
+    /// <summary>
+    /// Cancels take profit order for the position, if it exists
+    /// </summary>
+    /// <param name="contractId"></param>
+    /// <param name="positionId"></param>
+    public void CancelPositionTp(int contractId, string? positionId = null)
+        => ChangePositionTp(contractId, null, positionId);
+    
+    /// <summary>
+    /// Cancels take profit order for the position, if it exists
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <param name="positionId"></param>
+    public void CancelPositionTp(string symbol, string? positionId = null)
         => ChangePositionTp(symbol, null, positionId);
 
     
-    public int GetContractId(string symbol = MainSymbolName) => _contractsMapping[symbol];
-
-    protected Position? GetPosition(string symbol = MainSymbolName, string? strategyPositionId = null) =>
-        GetPosition(GetContractId(symbol), strategyPositionId);
-
-
-    protected IEnumerable<Position> GetPositions() =>
-        throw new NotSupportedException();
-        // Context?.AccountState.Positions
-        // ?? throw new InvalidOperationException("GetPositions can be called only from inside calculation methods");
+    public int GetContractId(string symbol) => _contractsMapping[symbol];
     
-    protected Position? GetPosition(int contractId, string? strategyPositionId) =>
-        throw new NotSupportedException();
-        // GetPositions().GetPosition(contractId, strategyPositionId);
-    
-    public IEnumerable<Position> GetPositionsByContract(int contractId) =>
-        throw new NotSupportedException();
-        // GetPositions().GetPositionsByContractId(contractId);
+    public string GetOpenPositionClOrdId(string symbol, string? positionId = null) => $"{symbol}-{positionId}-o";
+    public string GetClosePositionClOrdId(string symbol, string? positionId = null) => $"{symbol}-{positionId}-c";
+    public string GetStopLossClOrdId(string symbol, string? positionId = null) => $"{symbol}-{positionId}-sl";
+    public string GetTakeProfitClOrdId(string symbol, string? positionId = null) => $"{symbol}-{positionId}-tp";
 
-    protected IEnumerable<Position> GetPositionsByContract(string symbol = MainSymbolName) =>
-        throw new NotSupportedException();
-        // GetPositionsByContract(GetContractId(symbol));
-    
-    protected bool IsInPosition(string symbol = MainSymbolName) => throw new NotSupportedException();
-        // IsInPosition(GetContractId(symbol));
-
-    protected bool IsInPosition(int contractId)
-        => throw new NotSupportedException();//GetPositionsByContract(contractId).Any();
-
-    protected int GetNumberOfPositions(string symbol = MainSymbolName) =>
-        throw new NotSupportedException();
-        // GetPositionsByContract(symbol).Count();
-
-    protected IEnumerable<OrderStatus> GetOrdersByContract(string symbol) =>
-        throw new NotSupportedException();
-        // GetOrdersByContract(GetContractId(symbol));
-
-    protected IEnumerable<OrderStatus> GetOrders() =>
-        throw new NotSupportedException();
-        // Context?.AccountState.Orders
-        // ?? throw new InvalidOperationException("GetOrders can be called only from inside calculation methods");
-    
-    protected IEnumerable<OrderStatus> GetOrdersByContract(int contractId) =>
-        throw new NotSupportedException();
-        // GetOrders().GetOrdersByContractId(contractId);
-
-    protected OrderStatus? GetOrder(int contractId, string clOrdId, bool includeSuspended = false) =>
-        throw new NotSupportedException();
-        // GetOrders().GetOrder(contractId, clOrdId, includeSuspended);
-
-    public OrderStatus? GetPositionStopLoss(string symbol, string positionId, bool includeSuspended = false) =>
-        throw new NotSupportedException();
-        // GetOrder(GetContractId(symbol), GetStopLossClOrdId(positionId), includeSuspended);
-    
-    public OrderStatus? GetPositionStopLoss(int contractId, string positionId, bool includeSuspended = false) =>
-        throw new NotSupportedException();
-        // GetOrder(contractId, GetStopLossClOrdId(positionId), includeSuspended);
-
-    protected OrderStatus? GetPositionTakeProfit(string symbol, string positionId, bool includeSuspended = false) =>
-        throw new NotSupportedException();
-        // GetOrder(GetContractId(symbol), GetTakeProfitClOrdId(positionId), includeSuspended);
-    
-    protected OrderStatus? GetPositionTakeProfit(int contractId, string positionId, bool includeSuspended = false) =>
-        throw new NotSupportedException();
-        // GetOrder(contractId, GetTakeProfitClOrdId(positionId), includeSuspended);
-    
-    private string GetOpenPositionClOrdId(string positionId) => $"{positionId}-o";
-    private string GetStopLossClOrdId(string positionId) => $"{positionId}-sl";
-    private string GetTakeProfitClOrdId(string positionId) => $"{positionId}-tp";
-    private string GetClosePositionClOrdId(string positionId) => $"{positionId}-c";
-    
-    private IReadOnlyDictionary<int, decimal>? _baseVolumesCache;
-    //
-    protected decimal GetVolume(int contractId, decimal value)
+    public OrderStatus? GetPositionStopLoss(int contractId, string? positionId = null)
     {
-        var context = Context ?? throw new InvalidOperationException("GetVolume can be called only from inside calculation methods");
+        var context = Context 
+            ?? throw new InvalidOperationException("GetPositionStopLoss can be called only from inside calculation methods");
         
-        if (value == 0) return 0;
-        
-        var lastPrice = BarStoragesProvider.GetLastPrice(contractId) ?? 0;
-        if (lastPrice == 0) return 0;
-        
-        var contract = Context!.GetContract(contractId);
-        return contract.GetCalculator().GetVolume(value, (decimal)lastPrice);
-        
-        // if (context.AccountRecord.AccountType == AccountType.VirtualAccount)
-        // {
-        //     return Math.Round(vol, context.VirtualAccountSizeStepFraction);
-        // }
-        // else
-        // {
-        //     return contract.NormalizeVolume(Math.Abs(vol)) * Math.Sign(vol);
-        // }
+        var clOrdId = GetStopLossClOrdId(positionId);
+        return context.AccountState.Orders.SingleOrDefault(o =>
+            o.ContractId == contractId && o.ClOrdId == clOrdId);
     }
     
-    protected decimal GetVolume(string symbol, decimal value) => GetVolume(GetContractId(symbol), value);
+    public OrderStatus? GetPositionStopLoss(string symbol, string? positionId = null) =>
+        GetPositionStopLoss(GetContractId(symbol), positionId);
+    
+    public OrderStatus? GetPositionTakeProfit(int contractId, string? positionId = null)
+    {
+        var context = Context 
+            ?? throw new InvalidOperationException("GetPositionTakeProfit can be called only from inside calculation methods");
+        
+        var clOrdId = GetTakeProfitClOrdId(positionId);
+        return context.AccountState.Orders.SingleOrDefault(o =>
+            o.ContractId == contractId && o.ClOrdId == clOrdId);
+    }
+    
+    public OrderStatus? GetPositionTakeProfit(string symbol, string? positionId = null) =>
+        GetPositionTakeProfit(GetContractId(symbol), positionId);
     
     
+    /// <summary>
+    /// Calculates the volume given the desired value and price
+    /// </summary>
+    /// <param name="contractId"></param>
+    /// <param name="value">Defaults to the investment of the account</param>
+    /// <param name="price">Defaults to the price</param>
+    /// <param name="normalize">Whether to align the volume with the contract's MinSize and SizeStep</param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public decimal GetVolume(int contractId, decimal? value = null, decimal? price = null, bool normalize = true)
+    {
+        var context = Context 
+            ?? throw new InvalidOperationException("GetVolume can be called only from inside calculation methods");
+
+        value ??= context.AccountState.Investment;
+        if (value == 0) return 0;
+        
+        price ??= (decimal?)BarStoragesProvider.GetLastPrice(contractId) ?? 0m;
+        if (price == 0) return 0;
+        
+        var contract = Context!.GetContract(contractId)!;
+        var vol = contract.GetCalculator().GetVolume(value.Value, price.Value);
+        return normalize ? contract.NormalizeVolume(vol) : vol;
+    }
+    
+    /// <summary>
+    /// Calculates the volume given the desired value and price
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <param name="value">Defaults to the investment of the account</param>
+    /// <param name="price">Defaults to the price</param>
+    /// <param name="normalize">Whether to align the volume with the contract's MinSize and SizeStep</param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public decimal GetVolume(string symbol, decimal? value = null, decimal? price = null, bool normalize = true) 
+        => GetVolume(GetContractId(symbol), value, price, normalize);
+    
+    /// <summary>
+    /// Returns the list that can be passed to the NewOrderSingle constructor
+    /// </summary>
+    /// <param name="orders">ClOrdId + LinkType of the linked orders</param>
     public static IReadOnlyDictionary<string, LinkType> CreateLinkedOrdersList(params (string, LinkType)[] orders) =>
         orders.ToDictionary(o => o.Item1, o => o.Item2);
     
     #endregion
-    
-    // private void OnProcessingFinish()
-    // {
-    //     // _context = null;
-    //     _baseVolumesCache = null;
-    // }
 }

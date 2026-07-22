@@ -38,7 +38,7 @@ public static class Extensions
     public static IEnumerable<Position> GetPositionsByContractId(this IEnumerable<Position> positions, long contractId) =>
         positions.Where(p => p.ContractId == contractId);
 
-    public static NewOrderSingle GetClosingOrder(this Position p, string clOrdId) =>
+    public static NewOrderSingle GetClosingOrder(this Position p, string? clOrdId = null) =>
         NewOrderSingle.MarketOrder(
             clOrdId,
             p.AccountId,

@@ -36,7 +36,7 @@ namespace QuantInfra.Sdk.Trading.Calculators
             price == 0 ? 0 : Math.Round(volume * _tickValue / (price * _tickSize), precision ?? _settlCurrencyPrecision);
 
         public decimal GetPrice(decimal signedVolume, decimal value) =>
-            value == 0 ? 0 : Math.Round(signedVolume * _tickValue / (value * _tickSize), _waPrecision);
+            value == 0 ? 0 : signedVolume * _tickValue / (value * _tickSize);
 
         public decimal GetVolume(decimal value, decimal price) => value * price * _tickSize / _tickValue;
         

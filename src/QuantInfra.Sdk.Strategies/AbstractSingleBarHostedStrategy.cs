@@ -12,14 +12,16 @@ namespace QuantInfra.Sdk.Strategies
     public abstract class AbstractSingleBarHostedStrategy<TParams> : AbstractHostedStrategy<TParams>
         where TParams : class, new()
     {
-        public const string MainBarStorageName = "main";
+        private int _skipBars;
+        private readonly Dictionary<string, AbstractIndicator> _indicators = new();
         
-        protected int SkipBars { get; private set; }
-        Dictionary<string, AbstractIndicator> _indicators = new Dictionary<string, AbstractIndicator>();
+        protected int ContractId { get; }
+        protected string BarStorageName { get; }
 
         public AbstractSingleBarHostedStrategy(Strategy sc) : base(sc)
         {
-            
+            ContractId = sc.Symbols.Values.Single();
+            BarStorageName = sc.RequiredBarStorages.Keys.Single();
         }
 
         protected IBarStorage BarStorage { get; private set; }
@@ -28,7 +30,7 @@ namespace QuantInfra.Sdk.Strategies
 
         protected override void OnInitialize(StrategyInitializationContext initContext)
         {
-            BarStorage = ClaimBarStorage(StrategyConfig.RequiredBarStorages[MainBarStorageName]);
+            BarStorage = ClaimBarStorage(StrategyConfig.RequiredBarStorages[BarStorageName]);
             foreach (var s in StrategyConfig.Symbols)
             {
                 ClaimContract(s.Value, s.Key);
@@ -42,104 +44,78 @@ namespace QuantInfra.Sdk.Strategies
         protected virtual void OnInitialized(StrategyInitializationContext initContext) { }
         
 
-        protected override bool OnBarClosed(string barQualifier, StrategyCalculationContext context)
+        protected override void OnBarClosed(string barQualifier, StrategyCalculationContext context)
         {
-            if (BarStorage.Count < SkipBars) return false;
+            if (BarStorage.Count < _skipBars) return;
             CalculateVector(barQualifier, context);
-            return true;
         }
 
         protected abstract void CalculateVector(string barQualifier, StrategyCalculationContext context);
-
-        /// <summary>
-        /// 
-        /// </summary>
+        
         /// <param name="indicator"></param>
-        /// <param name="requiredBars">Number of bars used by a strategy. E.g. if a strategy requires a value of an indicator from 2 bars ago (Bars[2]), RequiredBars must be set to 3</param>
+        /// <param name="lookback">How many historical values are required</param>
         protected void RegisterIndicator(AbstractIndicator indicator, int lookback = 0, string? logName = null)
         {
-            SkipBars = Math.Max(SkipBars, BarStorage.RegisterIndicator(indicator, lookback));
+            _skipBars = Math.Max(_skipBars, BarStorage.RegisterIndicator(indicator, lookback));
             if (!string.IsNullOrEmpty(logName))
             {
                 _indicators.Add(logName, indicator);
             }
         }
-
-        protected void NewOrder(
-            decimal signedVolume,
-            PositionEffect positionEffect,
-            string clOrdId = null,
-            OrdType ordType = OrdType.Market,
-            double? price = null,
-            double? stopPx = null,
-            bool isSuspended = false,
-            string? positionId = null,
-            IReadOnlyDictionary<string, LinkType> linkedOrders = null,
-            bool isSLTP = false,
-            PegInstructions? pegInstructions = null
-        ) => NewOrder(MainSymbolName, signedVolume, positionEffect, clOrdId, ordType, price,
-            stopPx, isSuspended, positionId, linkedOrders, isSLTP, pegInstructions, tradingSessionIds: BarStorage.BarStorageConfig.TradingSessionIds); // HACK, TODO: trading session ids are assigned only for single bar strategies
-
-        protected void OpenPosition(
+        
+        /// <summary>
+        /// Opens new position
+        /// </summary>
+        public void OpenPosition(
             decimal signedVolume,
             double? stopLoss = null,
             double? takeProfit = null,
             string? positionId = null,
-            decimal? trailingStopStep = null,
             OrdType ordType = OrdType.Market,
             double? price = null,
+            double? stopPx = null,
             int? orderValiditySeconds = null
-        ) =>
-            OpenPosition(MainSymbolName, signedVolume, stopLoss, takeProfit, positionId, trailingStopStep, ordType, price, orderValiditySeconds: orderValiditySeconds, tradingSessionIds: BarStorage.BarStorageConfig.TradingSessionIds);        
-
-        // TODO: trading session ids
-        protected void ClosePosition(decimal newSignedVolume = 0, string? positionId = null, int? orderValiditySeconds = null) =>
-            ClosePosition(MainSymbolName, newSignedVolume, positionId, orderValiditySeconds: orderValiditySeconds);
-
+        ) => OpenPosition(ContractId, signedVolume, stopLoss, takeProfit, positionId,
+            ordType, price, stopPx, orderValiditySeconds);
+        
+        public void ClosePosition(string? positionId = null, string? clOrdId = null) => 
+            ClosePosition(ContractId, positionId, clOrdId);
+        
         protected void ChangePositionSL(double price, double? trailingStopLossStep = null, string? positionId = null) =>
-            ChangePositionSl(MainSymbolName, price, positionId);
+            ChangePositionSl(ContractId, price, positionId);
 
         protected void CancelPositionSL(string? positionId = null) =>
-            CancelPositionSl(MainSymbolName, positionId);
+            CancelPositionSl(ContractId, positionId);
 
         protected void ChangePositionTP(double price, string? positionId = null) =>
-            ChangePositionTp(MainSymbolName, price, positionId);
+            ChangePositionTp(ContractId, price, positionId);
 
         protected void CancelPositionTP(string? positionId = null) =>
-            CancelPositionTp(MainSymbolName, positionId);
+            CancelPositionTp(ContractId, positionId);
 
         protected OrderStatus? GetPositionStopLoss(string? positionId = null) =>
-            GetPositionStopLoss(StrategyConfig.Symbols[MainSymbolName], positionId);
+            GetPositionStopLoss(ContractId, positionId);
 
         protected OrderStatus? GetPositionTakeProfit(string? positionId = null) =>
-            GetPositionTakeProfit(StrategyConfig.Symbols[MainSymbolName], positionId);
-
-        protected bool IsInPosition() => throw new NotSupportedException();// IsInPosition(MainSymbolName);
-
-        protected bool IsActiveOpenOrdersLessThan(int orderCountLimit = 1) =>
-            throw new NotSupportedException();
-            // GetOrdersByContract(MainSymbolName).Count(o => !o.IsSltp && o.ContractId == StrategyConfig.Symbols[MainSymbolName]) < orderCountLimit;
-
-            /// <summary>
-            /// Do not use for multi-share strategies or if you assign PositionId manually.
-            /// The function returns a position with the default position ID, so you may get false results.
-            /// </summary>
-        protected Position? GetCurrentPosition() => throw new NotSupportedException();
-            // GetPosition();
-
-        protected Position? GetPosition(string positionId) =>
-            GetPositionsByContract().SingleOrDefault(p => p.StrategyPositionId == positionId);
+            GetPositionTakeProfit(ContractId, positionId);
         
-        protected decimal GetVolume(decimal value, string symbol = MainSymbolName) 
-            => GetVolume(GetContractId(symbol), value); 
+        protected decimal GetVolume(decimal? value = null, decimal? price = null, bool normalize = true) 
+            => GetVolume(ContractId, value, price, normalize); 
+        
+        public string GetOpenPositionClOrdId(string? positionId = null) => $"{positionId}-o";
+        public string GetClosePositionClOrdId(string? positionId = null) => $"{positionId}-c";
+        public string GetStopLossClOrdId(string? positionId = null) => $"{positionId}-sl";
+        public string GetTakeProfitClOrdId(string? positionId = null) => $"{positionId}-tp";
 
-        public int GetBarsCountSinceMoment(Instant startDate, int timeframe) => throw new NotImplementedException();// (int)((BarStorage.CurrentBar.OpenDt - BarStorage.GetBarOpeningDt(startDate)).TotalMinutes) / timeframe + (BarStorage.CurrentBar.Closed ? 1 : 0);
-        public int GetBarsCountSinceMoment(Instant startDate) => throw new NotImplementedException(); // GetBarsCountSinceMoment(startDate, StrategyConfig.MainTimeframe);
-
-
-        private void LogIndicators()
+        protected void LogIndicators(LogLevel logLevel = LogLevel.Trace)
         {
-            Logger.LogTrace($"{{{CurrentBar.BarToLogFormat},'indicators':{{{string.Join(',', _indicators.Select(i => $"'{i.Key}':{i.Value.GetLogInformation(CurrentBar)}"))}}}}}");
+            Logger.Log(logLevel,
+                "{{ {bar}, 'indicators': {{ {indicators} }} }}",
+                CurrentBar.BarToLogFormat,
+                string.Join(',', _indicators.Select(i => 
+                    $"'{i.Key}': {i.Value.GetLogInformation(CurrentBar)}"
+                ))
+            );
         }
     }
 }
